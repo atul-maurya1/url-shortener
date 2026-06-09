@@ -2,9 +2,10 @@ import express from 'express'
 
 const urlRouter = express.Router()
 
-import {takeUrl} from '../controller/url.controller.js'
+import {inputUrl, redirectUrl} from '../controller/url.controller.js'
 
-urlRouter.post('/take-url', takeUrl)
+urlRouter.post('/take-url', inputUrl)
+urlRouter.get('/:code', redirectUrl)
 
 
 export default urlRouter
