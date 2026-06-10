@@ -1,9 +1,13 @@
+import mongoose from 'mongoose'
 import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import urlValidation from "../utils/url-Validation.js";
 import Url from "../model/url.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { nanoid } from "nanoid";
+import Click from '../model/click.model.js'
+import os from 'os'
+import {UAParser} from "ua-parser-js";
 
 export const inputUrl = asyncHandler(async (req, res) => {
 	const { url } = req.body;
@@ -40,19 +44,34 @@ export const redirectUrl = asyncHandler(async (req ,res )=> {
 		throw new apiError(400, "wrong url")
 	}
 
-	const originalUrl = await Url.aggregate([
+	const urlData = await Url.aggregate([
 		{
 			$match: {
 				urlCode: code
 			}
-		},		
+		},	
+		{
+			$project: {
+				_id: 1,
+				url: 1
+			}
+		}	
 	])
 
-	if(originalUrl.length === 0){
+	if(urlData.length === 0){
 		throw new apiError(404, "url no found")
 	}
+    res.redirect(302, urlData[0].url)  
  
-   return res.redirect(302, originalUrl[0].url)  
-	//return res.status(302).json(new apiResponse(302, "Redirect successfully"))
- 
+	const result = UAParser(req.headers["user-agent"]);
+	const ip =
+	req.headers["x-forwarded-for"] ||
+	req.socket.remoteAddress;
+
+	const clickedData = await Click.create({
+		url: new mongoose.Types.ObjectId(urlData[0]._id),
+		browser: result.browser.name,
+		device: os.type(),
+		ip
+	}) 
 })

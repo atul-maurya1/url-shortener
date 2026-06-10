@@ -11,7 +11,8 @@ const clickSchema = new Schema(
     ip: String,
     device: String,
     location: String,
-    browser: String
+    browser: String,
+    
   },
   {
     timestamps: true
