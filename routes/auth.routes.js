@@ -5,9 +5,10 @@ import {validator} from '../middleware/validator.middleware.js'
 
 const authRouter = express.Router()
 
-import {userRegister} from '../controller/auth.controller.js'
+import {userRegister , verifyEmail} from '../controller/auth.controller.js'
 
 authRouter.post('/register' , userRegestrationValidation(),  validator ,userRegister)
+authRouter.post("/verify-email/:id", verifyEmail)
 
 
 

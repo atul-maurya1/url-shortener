@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 const userSchema = new mongoose.Schema({
 
@@ -13,8 +14,9 @@ const userSchema = new mongoose.Schema({
     },
     otp: {
         type: String,
-        expiresAt: Date.now()
+       
     },
+    expiresAt: Date,
     password: {
         type: String,
         required: [true, "password is required"],
